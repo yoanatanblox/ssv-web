@@ -42,6 +42,7 @@ jobs:
           OPERATORS_ENDPOINT: ${{ secrets.PROD_OPERATORS_ENDPOINT }}
           GOOGLE_TAG_SECRET: ${{ secrets.PROD_GOOGLE_TAG_SECRET }}
           BLOCKNATIVE_KEY: ${{ secrets.BLOCKNATIVE_KEY }}
+          ETHER_GAS_STATION_API_KEY: ${{ secrets.ETHER_GAS_STATION_API_KEY }}
           EXPLORER_URL: "https://explorer.ssv.network"
 
       - name: Deploy convert-cdt prod

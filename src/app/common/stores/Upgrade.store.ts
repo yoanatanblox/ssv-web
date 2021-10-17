@@ -340,12 +340,12 @@ class UpgradeStore extends BaseStore {
 
     return new Promise((resolve, reject) => {
       const requestInfo: RequestData = {
-        url: config.links.GASNOW_API_URL,
+        url: config.links.ETH_GAS_STATION,
         method: 'GET',
       };
       return new ApiRequest(requestInfo).sendRequest().then((response: any) => {
         const { data } = response;
-        const gasPrice = data?.standard;
+        const gasPrice = data?.average;
         if (estimate) {
           methodCall
             .estimateGas({
