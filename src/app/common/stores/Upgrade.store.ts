@@ -4,7 +4,6 @@ import { FixedNumber } from '@ethersproject/bignumber';
 import config from '~app/common/config';
 import BaseStore from '~app/common/stores/BaseStore';
 import { formatFloatToMaxPrecision } from '~lib/utils/numbers';
-import ApiRequest, { RequestData } from '~lib/utils/ApiRequest';
 import WalletStore from '~app/common/stores/Wallet/Wallet.store';
 
 export const UpgradeSteps = {
@@ -339,33 +338,9 @@ class UpgradeStore extends BaseStore {
       .convertCDTToSSV(weiValue);
 
     return new Promise((resolve, reject) => {
-      const requestInfo: RequestData = {
-        url: config.links.ETH_GAS_STATION,
-        method: 'GET',
-      };
-      return new ApiRequest(requestInfo).sendRequest().then((response: any) => {
-        const { data } = response;
-        const gasPrice = data?.average;
-        if (estimate) {
-          methodCall
-            .estimateGas({
-              from: this.accountAddress,
-              gasPrice,
-            })
-            .then((gasAmount: number) => {
-              console.debug(`Estimated Gas Amount is ${gasAmount} wei`);
-              const floatString = this.getStore('Wallet').web3.utils.fromWei(String(gasAmount), 'ether');
-              const etherGasAmount = parseFloat(floatString);
-              resolve(gasPrice * etherGasAmount);
-            })
-            .catch((error: any) => {
-              reject(error);
-            });
-        } else {
           methodCall
             .send({
               from: this.accountAddress,
-              gasPrice,
             })
             .on('error', (error: any) => {
               console.error('Upgrade Error', error);
@@ -379,8 +354,6 @@ class UpgradeStore extends BaseStore {
                 resolve(receipt);
               }
             });
-        }
-      });
     });
   }
 
