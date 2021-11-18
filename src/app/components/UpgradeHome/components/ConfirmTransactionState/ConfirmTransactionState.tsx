@@ -6,10 +6,10 @@ import Checkbox from '@material-ui/core/Checkbox';
 import InputLabel from '@material-ui/core/InputLabel';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { useStores } from '~app/hooks/useStores';
-import { formatFloatToMaxPrecision } from '~lib/utils/numbers';
 import ProgressStepper from '~app/common/components/ProgressStepper';
 import NotificationsStore from '~app/common/stores/Notifications.store';
 import UpgradeStore, { UpgradeSteps } from '~app/common/stores/Upgrade.store';
+import { formatFloatToMaxPrecision, roundCryptoValueString } from '~lib/utils/numbers';
 import { ActionButton } from '~app/components/UpgradeHome/components/ConversionState/ConversionState';
 import { useStyles } from '~app/components/UpgradeHome/components/ConversionState/ConversionState.styles';
 
@@ -296,7 +296,7 @@ const ConfirmTransactionState = () => {
 
         <ConfirmTransactionInfoRow>
           <ConfirmTransactionInfoLabel>To</ConfirmTransactionInfoLabel>
-          <ConfirmTransactionInfo>{formatFloatToMaxPrecision(upgradeStore.ssvValue)} SSV</ConfirmTransactionInfo>
+          <ConfirmTransactionInfo>{formatFloatToMaxPrecision(roundCryptoValueString(upgradeStore.ssvValue))} SSV</ConfirmTransactionInfo>
         </ConfirmTransactionInfoRow>
 
         <ConfirmTransactionInfoRow>

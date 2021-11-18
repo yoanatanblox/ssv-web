@@ -43,3 +43,25 @@ export const formatFloatToMaxPrecision = (numeric: number | string) => {
   }
   return floatString;
 };
+
+/**
+ * Limit float number to limited precision
+ * @param desiredNumber
+ * @param decimalPlaces
+ */
+const MAX_CRYPTO_VALUE_PRECISION = 18;
+export const roundCryptoValueString = (desiredNumber: number, decimalPlaces: number = MAX_CRYPTO_VALUE_PRECISION) => {
+  const arr = desiredNumber.toString().split('.');
+  if (arr.length === 1) {
+    return desiredNumber;
+  }
+  let len = decimalPlaces;
+  const totalDigits = arr[0].length + arr[1].length;
+  if (totalDigits > MAX_CRYPTO_VALUE_PRECISION) {
+    len = decimalPlaces - arr[0].length;
+    console.debug(`Adjusted crypto value decimal precision to ${len} numbers instead of ${decimalPlaces}, because total digits is ${totalDigits}`);
+    return '0';
+  }
+  const fraction = arr[1].substr(0, len);
+  return `${arr[0]}.${fraction}`;
+};

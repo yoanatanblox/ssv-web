@@ -3,8 +3,8 @@ import { action, computed, observable } from 'mobx';
 import { FixedNumber } from '@ethersproject/bignumber';
 import config from '~app/common/config';
 import BaseStore from '~app/common/stores/BaseStore';
-import { formatFloatToMaxPrecision } from '~lib/utils/numbers';
 import WalletStore from '~app/common/stores/Wallet/Wallet.store';
+import { formatFloatToMaxPrecision, roundCryptoValueString } from '~lib/utils/numbers';
 
 export const UpgradeSteps = {
   home: 0,
@@ -19,7 +19,7 @@ class UpgradeStore extends BaseStore {
   @observable userAgreedOnTerms: boolean = false;
 
   // Amounts
-  @observable userCdtValue: number | string = 0;
+  @observable userCdtValue: number = 0;
   @observable userCdtBalance: number | null = null;
   @observable ssvContractBalanceValue: number | null = null;
 
@@ -226,7 +226,7 @@ class UpgradeStore extends BaseStore {
    */
   @action.bound
   setCdtValue(value: number | string) {
-    this.userCdtValue = value;
+    this.userCdtValue = parseFloat(String(value));
   }
 
   /**
@@ -330,30 +330,30 @@ class UpgradeStore extends BaseStore {
    */
   @action.bound
   async convertCdtToSsv(estimate: boolean = false): Promise<any> {
-    console.debug(`${estimate ? 'Estimating' : 'Converting'} ${this.userCdtValue} CDT..`);
-
-    const weiValue = this.getStore('Wallet').web3.utils.toWei(String(this.userCdtValue), 'ether');
+    const etherValue = roundCryptoValueString(this.userCdtValue);
+    console.debug(`${estimate ? 'Estimating' : 'Converting'} ${etherValue} CDT..`);
+    const weiValue = this.getStore('Wallet').web3.utils.toWei(etherValue, 'ether');
     const methodCall = this.upgradeContract
       .methods
       .convertCDTToSSV(weiValue);
 
     return new Promise((resolve, reject) => {
-          methodCall
-            .send({
-              from: this.accountAddress,
-            })
-            .on('error', (error: any) => {
-              console.error('Upgrade Error', error);
-              reject(error);
-            })
-            .on('receipt', async (receipt: any) => {
-              console.debug('Received Receipt', receipt);
-              const event: boolean = 'CDTToSSVConverted' in receipt.events;
-              if (event) {
-                console.debug('Upgrade Receipt', receipt);
-                resolve(receipt);
-              }
-            });
+      methodCall
+        .send({
+          from: this.accountAddress,
+        })
+        .on('error', (error: any) => {
+          console.error('Upgrade Error', error);
+          reject(error);
+        })
+        .on('receipt', async (receipt: any) => {
+          console.debug('Received Receipt', receipt);
+          const event: boolean = 'CDTToSSVConverted' in receipt.events;
+          if (event) {
+            console.debug('Upgrade Receipt', receipt);
+            resolve(receipt);
+          }
+        });
     });
   }
 
