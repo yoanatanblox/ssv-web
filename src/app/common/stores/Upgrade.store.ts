@@ -332,7 +332,7 @@ class UpgradeStore extends BaseStore {
   async convertCdtToSsv(estimate: boolean = false): Promise<any> {
     const etherValue = roundCryptoValueString(this.userCdtValue);
     console.debug(`${estimate ? 'Estimating' : 'Converting'} ${etherValue} CDT..`);
-    const weiValue = this.getStore('Wallet').web3.utils.toWei(etherValue, 'ether');
+    const weiValue = this.getStore('Wallet').web3.utils.toWei(String(etherValue), 'ether');
     const methodCall = this.upgradeContract
       .methods
       .convertCDTToSSV(weiValue);
