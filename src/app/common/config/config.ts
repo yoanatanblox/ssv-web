@@ -1,4 +1,5 @@
 const config = {
+  DEBUG: process.env.DEBUG,
   routes: {
     TEST: '/guy',
     HOME: '/',
