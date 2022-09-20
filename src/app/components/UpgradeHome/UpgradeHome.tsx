@@ -52,8 +52,8 @@ const UpgradeHome = () => {
   useEffect(() => {
     if (isCountryRestricted === null) {
       setCheckingCountryRestriction(true);
-      checkUserCountryRestriction().then((isRestricted: boolean) => {
-        setCountryRestricted(isRestricted);
+      checkUserCountryRestriction().then(({ restricted }) => {
+        setCountryRestricted(restricted);
       }).finally(() => {
         setCheckingCountryRestriction(false);
       });
